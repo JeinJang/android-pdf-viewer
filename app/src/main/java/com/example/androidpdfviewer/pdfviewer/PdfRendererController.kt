@@ -1,4 +1,4 @@
-package com.example.android_pdf_viewer.pdfviewer
+package com.example.androidpdfviewer.pdfviewer
 
 import android.content.Context
 import android.graphics.Bitmap

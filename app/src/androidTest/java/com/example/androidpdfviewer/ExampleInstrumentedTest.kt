@@ -1,4 +1,4 @@
-package com.example.android_pdf_viewer
+package com.example.androidpdfviewer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

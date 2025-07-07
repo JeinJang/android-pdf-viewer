@@ -1,4 +1,4 @@
-package com.example.android_pdf_viewer
+package com.example.androidpdfviewer
 
 import org.junit.Test
 

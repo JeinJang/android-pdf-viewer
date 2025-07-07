@@ -1,6 +1,5 @@
-package com.example.android_pdf_viewer.ui.theme
+package com.example.androidpdfviewer.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

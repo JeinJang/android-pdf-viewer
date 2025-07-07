@@ -1,4 +1,4 @@
-package com.example.android_pdf_viewer.ui.theme
+package com.example.androidpdfviewer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

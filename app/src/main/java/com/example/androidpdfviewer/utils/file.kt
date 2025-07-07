@@ -1,4 +1,4 @@
-package com.example.android_pdf_viewer.utils
+package com.example.androidpdfviewer.utils
 
 import android.content.Context
 import java.io.File

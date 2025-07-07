@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.android_pdf_viewer"
+    namespace = "com.example.androidpdfviewer"
     compileSdk = 35
 
     defaultConfig {
@@ -56,4 +56,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.pdfbox.android)
 }

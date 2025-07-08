@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "android-pdf-viewer"
+rootProject.name = "androidpdfviewer"
 include(":app")
  

@@ -11,8 +11,10 @@ fun extractTextWordsFromPage(pdfFile: File, pageIndex: Int): List<TextWord> {
     val stripper = PositionAwareStripper().apply {
         startPage = pageIndex + 1
         endPage = pageIndex + 1
+        sortByPosition = true
     }
     stripper.getText(document) // 내부적으로 writeString 호출됨
+
     document.close()
     return stripper.collectedWords
 }

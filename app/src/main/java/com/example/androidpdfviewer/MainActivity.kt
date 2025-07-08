@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                PdfViewerScreen(pdfController = controller)
+                PdfViewerScreen(pdfController = controller, pdfFile = file)
             }
         }
     }

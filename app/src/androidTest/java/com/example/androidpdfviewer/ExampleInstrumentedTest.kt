@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.example.android_pdf_viewer", appContext.packageName)
+        assertEquals("com.example.androidpdfviewer", appContext.packageName)
     }
 }

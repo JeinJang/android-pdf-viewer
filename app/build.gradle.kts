@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.android_pdf_viewer"
+        applicationId = "com.example.androidpdfviewer"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

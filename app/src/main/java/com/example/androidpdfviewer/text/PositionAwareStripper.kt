@@ -20,24 +20,44 @@ class PositionAwareStripper : PDFTextStripper() {
 
     @Override
     override fun writeString(string: String?, textPositions: MutableList<TextPosition>?) {
-        if (string == null || textPositions == null) return
-        if (textPositions.isEmpty()) return
+        if (string == null || textPositions == null || textPositions.isEmpty()) return
 
-        val word = buildString { textPositions.forEach { append(it.unicode) } }.trim()
-        if (word.isNotEmpty()) {
-            val first = textPositions.first()
-            val last = textPositions.last()
+        val pageHeight = currentPage?.mediaBox?.height ?: 0f
 
-            val pageHeight = currentPage?.mediaBox?.height ?: 0f
+        var currentWord = StringBuilder()
+        var wordStart: TextPosition? = null
 
-            val left = first.xDirAdj
-            val top = pageHeight - first.yDirAdj
-            val right = last.xDirAdj + last.widthDirAdj
-            val bottom = pageHeight - (first.yDirAdj - first.heightDir)
+        for ((i, pos) in textPositions.withIndex()) {
+            val char = pos.unicode
+            if (char.isNotBlank()) {
+                if (currentWord.isEmpty()) {
+                    wordStart = pos
+                }
+                currentWord.append(char)
+            }
 
-            val rect = RectF(left, top, right, bottom)
-            collectedWords.add(TextWord(word, rect))
+            val isLastChar = i == textPositions.size - 1
+            val nextChar = if (!isLastChar) textPositions[i + 1].unicode else " "
+
+            if (
+                char.all { it.isWhitespace() } ||
+                nextChar.all { it.isWhitespace() } ||
+                isLastChar
+            ) {
+                if (currentWord.isNotEmpty() && wordStart != null) {
+                    val wordEnd = pos
+                    val left = wordStart.xDirAdj
+                    val top = pageHeight - wordStart.yDirAdj
+                    val right = wordEnd.xDirAdj + wordEnd.widthDirAdj
+                    val bottom = pageHeight - (wordStart.yDirAdj - wordStart.heightDir)
+                    val rect = RectF(left, top, right, bottom)
+                    collectedWords.add(TextWord(currentWord.toString(), rect))
+                    currentWord = StringBuilder()
+                    wordStart = null
+                }
+            }
         }
+
         super.writeString(string, textPositions)
     }
 }

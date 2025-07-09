@@ -2,7 +2,6 @@ package com.example.androidpdfviewer.pdfviewer
 
 import android.graphics.Bitmap
 import android.graphics.RectF
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +34,8 @@ import com.example.androidpdfviewer.graphics.normalize
 import com.example.androidpdfviewer.text.TextWord
 import com.example.androidpdfviewer.utils.extractTextWordsFromPage
 import com.example.androidpdfviewer.utils.mapPdfRectToBitmapRect
+import com.example.androidpdfviewer.utils.groupWordsByLine
+import com.example.androidpdfviewer.utils.selectWordsInRect
 import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 import java.io.File
 import kotlin.math.abs
@@ -50,34 +51,11 @@ fun PdfViewerScreen(pdfController: PdfRendererController, pdfFile: File) {
     var dragEnd by remember { mutableStateOf<Offset?>(null) }
     var lines by remember { mutableStateOf<List<List<TextWord>>>(emptyList()) }
 
-    fun groupWordsByLine(words: List<TextWord>, lineThreshold: Float = 10f): List<List<TextWord>> {
-        val sorted = words.sortedBy { it.boundingBox.top }
-        val lines = mutableListOf<MutableList<TextWord>>()
-        for (word in sorted) {
-            val y = word.boundingBox.top
-            val lastLine = lines.lastOrNull()
-            if (lastLine == null || abs(lastLine.last().boundingBox.top - y) > lineThreshold) {
-                lines.add(mutableListOf(word))
-            } else {
-                lastLine.add(word)
-            }
-        }
-        return lines.map { it.sortedBy { w -> w.boundingBox.left } }
-    }
-
-    fun selectWordsInRect(
+    fun decideSelectedWords(
         lines: List<List<TextWord>>,
         selectionRect: RectF
     ): List<TextWord> {
-        val selected = mutableListOf<TextWord>()
-        for (line in lines) {
-            val lineRect = line.fold(RectF(line[0].boundingBox)) { acc, w -> acc.apply { union(w.boundingBox) } }
-            if (RectF.intersects(lineRect, selectionRect)) {
-                val lineSelected = line.filter { RectF.intersects(it.boundingBox, selectionRect) }
-                selected.addAll(lineSelected)
-            }
-        }
-        return selected
+        return selectWordsInRect(lines, selectionRect)
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -109,8 +87,9 @@ fun PdfViewerScreen(pdfController: PdfRendererController, pdfFile: File) {
                     pageSize.second,
                     bitmap!!.width,
                     bitmap!!.height
-                ))
+                ).normalize())
             }
+
             lines = groupWordsByLine(textWords)
 
             selectedWords = emptyList()
@@ -145,7 +124,7 @@ fun PdfViewerScreen(pdfController: PdfRendererController, pdfFile: File) {
 
                                         if ((x0 != x1) && (y0 != y1)) {
                                             val selectionRect = RectF(x0, y0, x1, y1).normalize()
-                                            selectedWords = selectWordsInRect(lines, selectionRect)
+                                            selectedWords = decideSelectedWords(lines, selectionRect)
                                         }
                                     }
                                 },
@@ -169,10 +148,7 @@ fun PdfViewerScreen(pdfController: PdfRendererController, pdfFile: File) {
                                         }
 
                                         val selectionRect = RectF(x0, y0, x1, y1).normalize()
-                                        selectedWords = selectWordsInRect(lines, selectionRect)
-
-                                        val selectedText = selectedWords.joinToString(" ") { it.text }
-                                        Log.d("PdfViewer", "Selected text: $selectedText")
+                                        selectedWords = decideSelectedWords(lines, selectionRect)
                                     }
                                     dragStart = null
                                     dragEnd = null

@@ -38,6 +38,7 @@ fun selectWordsInRect(
                 endLineIndex = lineIdx
                 endWordIndex = wordIdx
             }
+
         }
     }
 
